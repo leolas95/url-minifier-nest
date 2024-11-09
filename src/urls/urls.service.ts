@@ -3,11 +3,28 @@ import { CreateUrlDto } from './dto/create-url.dto';
 
 @Injectable()
 export class UrlsService {
+  private readonly urls = [];
+
   create(createUrlDto: CreateUrlDto) {
-    return 'This action adds a new url';
+    const shortUrl = this.generateShortUrl(createUrlDto.url);
+    this.save(shortUrl, createUrlDto.url);
+    return shortUrl;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} url`;
+  generateShortUrl(url: string): string {
+    return 'abc123';
+  }
+
+  save(shortUrl: string, longUrl: string) {
+    this.urls.push({ id: shortUrl, longUrl: longUrl });
+  }
+
+  findOne(id: string): string {
+    for (let i = 0; i < this.urls.length; i += 1) {
+      if (this.urls[i].id === id) {
+        return this.urls[i].longUrl;
+      }
+    }
+    return '';
   }
 }

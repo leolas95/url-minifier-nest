@@ -11,8 +11,8 @@ export class UrlsController {
     return this.urlsService.create(createUrlDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.urlsService.findOne(+id);
+  @Get(':shortUrl')
+  findOne(@Param('shortUrl') shortUrl: string) {
+    return this.urlsService.findOne(shortUrl);
   }
 }
