@@ -7,12 +7,15 @@ export class UrlsController {
   constructor(private readonly urlsService: UrlsService) {}
 
   @Post()
-  create(@Body() createUrlDto: CreateUrlDto) {
+  async create(@Body() createUrlDto: CreateUrlDto): Promise<string> {
     return this.urlsService.create(createUrlDto);
   }
 
   @Get(':shortUrl')
-  findOne(@Param('shortUrl') shortUrl: string) {
-    return this.urlsService.findOne(shortUrl);
+  async findOne(
+    @Param('shortUrl') shortUrl: string,
+  ): Promise<{ long_url: string } | { error_message: string }> {
+    const url = await this.urlsService.findOne(shortUrl);
+    return Promise.resolve({ long_url: url.long_url });
   }
 }
