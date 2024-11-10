@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';
+import { Response } from 'express';
 
 @Controller('urls')
 export class UrlsController {
@@ -18,11 +19,13 @@ export class UrlsController {
   }
 
   @Get(':shortUrl')
-  async findOne(
-    @Param('shortUrl') shortUrl: string,
-  ): Promise<{ long_url: string } | { error_message: string }> {
+  async findOne(@Param('shortUrl') shortUrl: string, @Res() res: Response) {
     const url = await this.urlsService.findOne(shortUrl);
-    return Promise.resolve({ long_url: url.long_url });
+    if (url === null) {
+      return res.status(404).json({ message: 'could not find a url' });
+    }
+
+    return res.redirect(url.long_url);
   }
 
   @Get()
