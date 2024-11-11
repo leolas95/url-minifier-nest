@@ -1,3 +1,3 @@
-export class CreateUrlDto {
+export interface CreateUrlDto {
   url: string;
 }
