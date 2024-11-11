@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { UrlsService } from './urls.service';
 import { CreateUrlDto } from './dto/create-url.dto';
 import { Response } from 'express';
+import { CreateErrorDto } from './dto/create-error.dto';
+import { CreateSuccessDto } from './dto/create-success.dto';
 
 @Controller('urls')
 export class UrlsController {
@@ -10,22 +12,25 @@ export class UrlsController {
   @Post()
   async create(
     @Body() createUrlDto: CreateUrlDto,
-  ): Promise<{ url: string } | { error: string; message: string }> {
+  ): Promise<CreateSuccessDto | CreateErrorDto> {
     const result = await this.urlsService.create(createUrlDto);
     if (result === null) {
-      return { error: 'creation error', message: 'could not create' };
+      return { type: 'creation error', message: 'could not create' };
     }
     return { url: result.id };
   }
 
   @Get(':shortUrl')
-  async findOne(@Param('shortUrl') shortUrl: string, @Res() res: Response) {
+  async findOne(
+    @Param('shortUrl') shortUrl: string,
+    @Res() res: Response,
+  ): Promise<void> {
     const url = await this.urlsService.findOne(shortUrl);
     if (url === null) {
-      return res.status(404).json({ message: 'could not find a url' });
+      res.status(404).json({ message: 'could not find a url' });
     }
 
-    return res.redirect(url.long_url);
+    res.redirect(url.long_url);
   }
 
   @Get()
